@@ -3,6 +3,25 @@ export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}', './src/index.html'],
   theme: {
     extend: {
+      zIndex: {
+        '1': '1',
+        '10': '10',
+        '20': '20',
+        '30': '30',
+        '40': '40',
+        '50': '50',
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+        '999': '999',
+        '9999': '9999',
+        'dropdown': '999',
+        'tooltip': '9999',
+        'modal': '1000',
+        'overlay': '998',
+      },
       colors: {
         // Claude Code inspired color palette with warm neutrals
         claude: {

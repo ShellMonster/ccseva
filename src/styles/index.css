@@ -628,4 +628,48 @@ body {
   transition: stroke-dasharray 1s ease-in-out;
 }
 
+/* Z-Index Layer Utilities */
+.z-base {
+  z-index: 1;
+}
+
+.z-dropdown {
+  z-index: 999;
+}
+
+.z-overlay {
+  z-index: 998;
+}
+
+.z-modal {
+  z-index: 1000;
+}
+
+.z-tooltip {
+  z-index: 9999;
+}
+
+/* Enhanced Overlay Styles */
+.overlay-backdrop {
+  background: rgba(28, 25, 23, 0.8);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.dropdown-content {
+  background: rgba(41, 37, 36, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(250, 250, 249, 0.1);
+  box-shadow: 0 10px 25px rgba(28, 25, 23, 0.3);
+}
+
+.tooltip-content {
+  background: rgba(41, 37, 36, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(250, 250, 249, 0.15);
+  box-shadow: 0 8px 20px rgba(28, 25, 23, 0.4);
+}
+
 
