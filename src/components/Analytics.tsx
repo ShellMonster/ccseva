@@ -26,8 +26,8 @@ const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
+    minimumFractionDigits: 5,
+    maximumFractionDigits: 5,
   }).format(amount);
 };
 
@@ -927,7 +927,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ stats }) => {
                         </div>
                         <div>
                           <div className="text-xl font-bold text-white">
-                            {stats.today.totalTokens > 0
+                            {stats.today.totalTokens > 0 && stats.today.totalCost > 0
                               ? formatCurrency(
                                   (stats.today.totalCost / stats.today.totalTokens) * 1000
                                 )

@@ -107,38 +107,41 @@ const getStatusHelpers = (status: 'safe' | 'warning' | 'critical') => {
 // Component for key metrics row
 const KeyMetricsRow: React.FC<{
   stats: UsageStats;
-  timeRemaining: string;
-}> = ({ stats, timeRemaining }) => (
-  <div className="grid grid-cols-3 gap-4 text-center">
-    <div className="space-y-2">
-      <div className="text-2xl font-bold text-neutral-100 font-primary">
-        {formatNumber(stats.tokensUsed)}
-      </div>
-      <div className="text-sm text-neutral-400 font-primary">Tokens Used</div>
-      <div className="text-xs text-neutral-500 font-primary">
-        of {formatNumber(stats.tokenLimit)}
-      </div>
-    </div>
+}> = ({ stats }) => {
+  const timeRemaining = stats.actualResetInfo?.formattedTimeRemaining || 'No active session';
 
-    <div className="space-y-2">
-      <div className="text-2xl font-bold text-neutral-100 font-primary">
-        {formatCurrency(stats.today.totalCost)}
+  return (
+    <div className="grid grid-cols-3 gap-4 text-center">
+      <div className="space-y-2">
+        <div className="text-2xl font-bold text-neutral-100 font-primary">
+          {formatNumber(stats.tokensUsed)}
+        </div>
+        <div className="text-sm text-neutral-400 font-primary">Tokens Used</div>
+        <div className="text-xs text-neutral-500 font-primary">
+          of {formatNumber(stats.tokenLimit)}
+        </div>
       </div>
-      <div className="text-sm text-neutral-warm-400 font-primary">Cost Today</div>
-      <div className="text-xs text-neutral-500 font-primary">
-        {stats.today.totalTokens.toLocaleString()} tokens
-      </div>
-    </div>
 
-    <div className="space-y-2">
-      <div className="text-2xl font-bold text-neutral-100 font-primary">
-        {formatNumber(stats.tokensRemaining)}
+      <div className="space-y-2">
+        <div className="text-2xl font-bold text-neutral-100 font-primary">
+          {formatCurrency(stats.today.totalCost)}
+        </div>
+        <div className="text-sm text-neutral-warm-400 font-primary">Cost Today</div>
+        <div className="text-xs text-neutral-500 font-primary">
+          {stats.today.totalTokens.toLocaleString()} tokens
+        </div>
       </div>
-      <div className="text-sm text-neutral-warm-400 font-primary">Remaining</div>
-      <div className="text-xs text-neutral-500 font-primary">{timeRemaining}</div>
+
+      <div className="space-y-2">
+        <div className="text-2xl font-bold text-neutral-100 font-primary">
+          {formatNumber(stats.tokensRemaining)}
+        </div>
+        <div className="text-sm text-neutral-warm-400 font-primary">Remaining</div>
+        <div className="text-xs text-neutral-500 font-primary">{timeRemaining}</div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Component for circular progress charts
 const CircularProgressChart: React.FC<{
@@ -220,10 +223,9 @@ const CircularProgressChart: React.FC<{
 interface DashboardProps {
   stats: UsageStats;
   status: 'safe' | 'warning' | 'critical';
-  timeRemaining: string;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ stats, status, timeRemaining }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ stats, status }) => {
   const { getStatusColor, getStatusIcon } = getStatusHelpers(status);
 
   return (
@@ -274,7 +276,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, status, timeRemaini
               </Tooltip>
             </div>
 
-            <KeyMetricsRow stats={stats} timeRemaining={timeRemaining} />
+            <KeyMetricsRow stats={stats} />
           </CardContent>
         </Card>
 
@@ -390,7 +392,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, status, timeRemaini
                       </p>
                     </TooltipContent>
                   </Tooltip>
-                  <span className="text-neutral-100 font-medium font-primary">{timeRemaining}</span>
+                  <span className="text-neutral-100 font-medium font-primary">
+                    {stats.actualResetInfo?.formattedTimeRemaining || 'No active session'}
+                  </span>
                 </div>
                 <Badge
                   variant={

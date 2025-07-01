@@ -1,5 +1,6 @@
 import { loadDailyUsageData, loadSessionBlockData } from 'ccusage/data-loader';
 import type {
+  ActualResetInfo,
   DailyUsage,
   MenuBarData,
   PredictionInfo,
@@ -82,6 +83,7 @@ export class CCUsageService {
   private resetTimeService: ResetTimeService;
   private sessionTracker: SessionTracker;
   private historicalBlocks: SessionBlock[] = []; // Store session blocks for analysis
+  private currentActiveBlock: SessionBlock | null = null; // Store current active block
   private currentPlan: 'Pro' | 'Max5' | 'Max20' | 'Custom' = 'Pro';
   private detectedTokenLimit = 7000;
 
@@ -180,8 +182,20 @@ export class CCUsageService {
 
     if (!activeBlock) {
       console.log('No active session found');
+      this.currentActiveBlock = null;
       return this.getDefaultStats();
     }
+
+    console.log(
+      'activeBlock:',
+      activeBlock.endTime,
+      activeBlock.actualEndTime,
+      activeBlock.isActive,
+      activeBlock.startTime
+    );
+
+    // Store the active block for reset time calculation
+    this.currentActiveBlock = activeBlock;
 
     // Get tokens from active session
     const tokensUsed = this.getTotalTokensFromBlock(activeBlock);
@@ -245,7 +259,10 @@ export class CCUsageService {
 
     console.log('todayStr:', todayStr);
     console.log('todayData:', todayData);
-    console.log('processedDailyData:', processedDailyData);
+
+    // Get actual reset time from session data
+    const actualResetInfo = this.getTimeUntilActualReset();
+    console.log('actualResetInfo:', actualResetInfo);
 
     return {
       today: todayData,
@@ -265,6 +282,7 @@ export class CCUsageService {
       velocity,
       prediction,
       resetInfo,
+      actualResetInfo,
       predictedDepleted: prediction.depletionTime,
       currentPlan: this.currentPlan,
       tokenLimit,
@@ -899,6 +917,61 @@ export class CCUsageService {
     // Simplified: assume afternoon hours are peak usage
     // In a real implementation, this would analyze hourly usage patterns
     return 14; // 2 PM
+  }
+
+  /**
+   * Get actual next reset time based on active session block end time
+   */
+  private getActualNextResetTime(): Date | null {
+    if (!this.currentActiveBlock) {
+      return null;
+    }
+
+    // Use only endTime from the active block
+    return this.currentActiveBlock.endTime;
+  }
+
+  /**
+   * Calculate time remaining until next reset based on actual session data
+   */
+  getTimeUntilActualReset(): {
+    nextResetTime: Date | null;
+    timeUntilReset: number;
+    formattedTimeRemaining: string;
+  } {
+    const actualResetTime = this.getActualNextResetTime();
+
+    if (!actualResetTime) {
+      return {
+        nextResetTime: null,
+        timeUntilReset: 0,
+        formattedTimeRemaining: 'No active session',
+      };
+    }
+
+    const now = new Date();
+    const timeUntilReset = Math.max(0, actualResetTime.getTime() - now.getTime());
+
+    // Format time remaining
+    const hours = Math.floor(timeUntilReset / (1000 * 60 * 60));
+    const minutes = Math.floor((timeUntilReset % (1000 * 60 * 60)) / (1000 * 60));
+
+    let formattedTimeRemaining: string;
+    if (timeUntilReset <= 0) {
+      formattedTimeRemaining = 'Reset available';
+    } else if (hours > 0) {
+      formattedTimeRemaining = `${hours} hours ${minutes} minutes left`;
+    } else if (minutes > 0) {
+      formattedTimeRemaining = `${minutes} minutes left`;
+    } else {
+      formattedTimeRemaining = 'Less than 1 minute left';
+    }
+
+    return {
+      nextResetTime: actualResetTime,
+      timeUntilReset,
+      formattedTimeRemaining,
+    };
   }
 
   /**

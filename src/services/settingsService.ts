@@ -5,6 +5,8 @@ import * as path from 'node:path';
 export interface AppSettings {
   timezone: string;
   resetHour: number;
+  plan: 'auto' | 'Pro' | 'Max5' | 'Max20' | 'Custom';
+  customTokenLimit?: number;
 }
 
 export class SettingsService {
@@ -23,6 +25,8 @@ export class SettingsService {
     this.defaultSettings = {
       timezone: detectedTimezone,
       resetHour: 0,
+      plan: 'auto',
+      customTokenLimit: undefined,
     };
 
     // Ensure settings directory exists

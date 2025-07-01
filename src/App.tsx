@@ -31,6 +31,8 @@ interface AppState {
   preferences: {
     timezone?: string;
     resetHour?: number;
+    plan?: 'auto' | 'Pro' | 'Max5' | 'Max20' | 'Custom';
+    customTokenLimit?: number;
   };
 }
 
@@ -45,6 +47,8 @@ const App: React.FC = () => {
     preferences: {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       resetHour: 0,
+      plan: 'auto',
+      customTokenLimit: undefined,
     },
   });
 
@@ -498,11 +502,7 @@ const App: React.FC = () => {
             {/* Content */}
             <div className="space-y-3 pb-3">
               {state.currentView === 'dashboard' && (
-                <Dashboard
-                  stats={currentStats}
-                  status={usageStatus}
-                  timeRemaining={timeRemaining}
-                />
+                <Dashboard stats={currentStats} status={usageStatus} />
               )}
 
               {state.currentView === 'analytics' && (
@@ -510,7 +510,11 @@ const App: React.FC = () => {
               )}
 
               {state.currentView === 'terminal' && (
-                <TerminalView stats={currentStats} onRefresh={refreshData} />
+                <TerminalView
+                  stats={currentStats}
+                  onRefresh={refreshData}
+                  preferences={state.preferences}
+                />
               )}
 
               {state.currentView === 'settings' && (
