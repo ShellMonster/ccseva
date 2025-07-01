@@ -149,9 +149,6 @@ export class CCUsageService {
         }),
       ]);
 
-      // console.log('blocks', blocks);
-      // console.log('dailyData', dailyData);
-
       if (!blocks || blocks.length === 0) {
         console.error('No blocks data received');
         return this.getMockStats();
@@ -166,7 +163,6 @@ export class CCUsageService {
       return stats;
     } catch (error) {
       console.error('Error fetching usage stats:', error);
-      console.log('Falling back to mock data for development/testing');
 
       // Return mock data for development/testing
       return this.getMockStats();
@@ -181,18 +177,9 @@ export class CCUsageService {
     const activeBlock = blocks.find((block) => block.isActive && !block.isGap);
 
     if (!activeBlock) {
-      console.log('No active session found');
       this.currentActiveBlock = null;
       return this.getDefaultStats();
     }
-
-    console.log(
-      'activeBlock:',
-      activeBlock.endTime,
-      activeBlock.actualEndTime,
-      activeBlock.isActive,
-      activeBlock.startTime
-    );
 
     // Store the active block for reset time calculation
     this.currentActiveBlock = activeBlock;
@@ -257,12 +244,8 @@ export class CCUsageService {
     const todayData =
       processedDailyData.find((d) => d.date === todayStr) || this.getEmptyDailyUsage();
 
-    console.log('todayStr:', todayStr);
-    console.log('todayData:', todayData);
-
     // Get actual reset time from session data
     const actualResetInfo = this.getTimeUntilActualReset();
-    console.log('actualResetInfo:', actualResetInfo);
 
     return {
       today: todayData,
