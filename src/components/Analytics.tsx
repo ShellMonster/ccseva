@@ -7,9 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 
 interface AnalyticsProps {
   stats: UsageStats;
-  preferences: {
-    animationsEnabled: boolean;
-  };
+  preferences: Record<string, unknown>;
 }
 
 type ChartTimeRange = '7d' | '30d';

@@ -97,6 +97,27 @@ export class CCUsageService {
     return CCUsageService.instance;
   }
 
+  private toISOStringLocal(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+
+    // Calculate timezone offset
+    const timezoneOffsetMinutes = date.getTimezoneOffset();
+    const offsetSign = timezoneOffsetMinutes > 0 ? '-' : '+';
+    const offsetHours = Math.floor(Math.abs(timezoneOffsetMinutes) / 60)
+      .toString()
+      .padStart(2, '0');
+    const offsetMinutes = (Math.abs(timezoneOffsetMinutes) % 60).toString().padStart(2, '0');
+    const timezoneOffsetString = `${offsetSign}${offsetHours}:${offsetMinutes}`;
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${timezoneOffsetString}`;
+  }
+
   updateConfiguration(config: Partial<UserConfiguration>): void {
     this.resetTimeService.updateConfiguration(config);
     if (config.plan) {
@@ -125,6 +146,9 @@ export class CCUsageService {
           mode: 'calculate', // Calculate costs from tokens
         }),
       ]);
+
+      // console.log('blocks', blocks);
+      // console.log('dailyData', dailyData);
 
       if (!blocks || blocks.length === 0) {
         console.error('No blocks data received');
@@ -215,9 +239,13 @@ export class CCUsageService {
       processedDailyData = this.convertBlocksToDailyUsage(blocks);
     }
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = this.toISOStringLocal(new Date()).split('T')[0];
     const todayData =
       processedDailyData.find((d) => d.date === todayStr) || this.getEmptyDailyUsage();
+
+    console.log('todayStr:', todayStr);
+    console.log('todayData:', todayData);
+    console.log('processedDailyData:', processedDailyData);
 
     return {
       today: todayData,
