@@ -51,7 +51,8 @@ The app follows standard Electron patterns with clear separation:
 ### Key Architectural Components
 
 #### Service Layer (Singleton Pattern)
-- **CCUsageService**: Uses the `ccusage` npm package data-loader API to fetch usage data, implementing a 30-second cache.
+- **CCUsageService**: Uses the `ccusage` npm package data-loader API to fetch usage data, implementing a 30-second cache. Now supports plan configuration and actual session-based reset times.
+- **SettingsService**: Manages user preferences persistence to `~/.ccseva/settings.json` including plan selection, custom token limits, timezone, and reset hour settings
 - **NotificationService**: Manages macOS notifications with cooldown periods and threshold detection
 - **ResetTimeService**: Handles Claude usage reset time calculations and timezone management
 - **SessionTracker**: Tracks user sessions and activity patterns for analytics
@@ -175,9 +176,27 @@ When using the `ccusage` package data-loader API:
 
 ## Recent Updates and Improvements
 
-### ccusage Integration Refactor (Latest)
+### Settings Management & Plan Selection (Latest)
+- **Claude Plan Settings**: Added comprehensive plan selection in SettingsPanel with Auto-detect, Pro, Max5, Max20, and Custom options
+- **Persistent Settings**: Extended SettingsService to save plan preferences to `~/.ccseva/settings.json` with backward compatibility
+- **Custom Token Limits**: Custom plan option allows users to set non-standard token limits with validation
+- **Real-time Plan Display**: TerminalView now shows selected plan settings instead of just auto-detected plans
+- **Settings UI Enhancement**: Professional plan selection dropdown with token limit display and current plan detection
+
+### Session-Based Reset Time Accuracy
+- **Active Session Integration**: Reset time now uses actual `activeBlock.endTime` from session data instead of estimated monthly cycles
+- **Real-time Countdown**: SettingsPanel displays live countdown showing "X hours Y minutes left" updating every minute
+- **Simplified Logic**: Removed complex fallback calculations, shows "No active session" when appropriate
+- **Dashboard Integration**: Updated Dashboard to use actual session-based reset times consistently
+
+### Cost Calculation Improvements
+- **Enhanced Average Cost**: Fixed Analytics average cost per 1000 tokens calculation with better edge case handling
+- **Data Validation**: Added checks for both `totalTokens > 0 AND totalCost > 0` to prevent division by zero
+- **Accurate Pricing**: Formula `(totalCost / totalTokens) * 1000` now properly validated for real-world cost accuracy
+
+### ccusage Integration Refactor
 - **Switched from CLI to API**: Refactored `CCUsageService` to use the `ccusage` npm package directly, replacing `child_process` calls.
-- **Simplified data fetching**: API calls (`getDailyUsage`) now return structured JS objects, removing the need for manual JSON parsing and field name mapping.
+- **Simplified data fetching**: API calls (`loadSessionBlockData`, `loadDailyUsageData`) now return structured JS objects, removing the need for manual JSON parsing and field name mapping.
 - **Improved reliability**: Direct API integration is more robust and less prone to issues from shell environment differences.
 - **Dependency management**: `ccusage` is now a formal npm dependency in `package.json`, ensuring version consistency.
 
@@ -201,6 +220,7 @@ ccseva/
 │   │   └── ui/                 # Radix UI components
 │   ├── services/               # Business logic services
 │   │   ├── ccusageService.ts   # ccusage data-loader integration
+│   │   ├── settingsService.ts  # User preferences persistence
 │   │   ├── notificationService.ts # macOS notification management
 │   │   ├── resetTimeService.ts # Reset time calculations
 │   │   └── sessionTracker.ts   # Session tracking
@@ -240,12 +260,22 @@ Since there are no automated tests, manual verification checklist:
 ### Data Integration
 7. **ccusage data-loader integration**: Verify correct import and usage of data-loader functions
 8. **Data consistency**: Ensure displayed data matches `ccusage` output
-9. **Reset time calculations**: Verify timezone-aware reset time detection
+9. **Actual reset time accuracy**: Verify session-based reset times from active blocks
 10. **Session tracking**: Confirm session data persistence and analytics
+11. **Settings persistence**: Confirm plan and preference settings save to `~/.ccseva/settings.json`
+
+### Plan Management & Settings
+12. **Plan selection**: Test Auto-detect, Pro, Max5, Max20, and Custom plan options in SettingsPanel
+13. **Custom token limits**: Verify custom plan allows setting and validation of non-standard limits
+14. **Real-time updates**: Confirm plan changes immediately update Dashboard and TerminalView displays
+15. **Settings persistence**: Verify settings survive app restarts and maintain backward compatibility
 
 ### UI/UX Features
-11. **Toast notifications**: In-app notifications work properly
-12. **macOS notifications**: System alerts appear at thresholds
-13. **Theme consistency**: Tailwind styling renders correctly
-14. **Responsive design**: Interface adapts to different window sizes
-15. **Component interactions**: All Radix UI components function properly
+16. **Toast notifications**: In-app notifications work properly
+17. **macOS notifications**: System alerts appear at thresholds
+18. **Real-time countdown**: SettingsPanel shows live "X hours Y minutes left" updating every minute
+19. **Plan display consistency**: TerminalView shows selected plan settings (not just auto-detected)
+20. **Cost calculation accuracy**: Analytics shows correct average cost per 1000 tokens
+21. **Theme consistency**: Tailwind styling renders correctly
+22. **Responsive design**: Interface adapts to different window sizes
+23. **Component interactions**: All Radix UI components function properly

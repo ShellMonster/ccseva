@@ -13,6 +13,8 @@ export interface ElectronAPI {
   takeScreenshot: () => Promise<ScreenshotResult>;
   onUsageUpdated: (callback: () => void) => void;
   removeUsageUpdatedListener: (callback: () => void) => void;
+  loadSettings: () => Promise<any>;
+  saveSettings: (settings: Record<string, unknown>) => Promise<{ success: boolean }>;
 }
 
 declare global {

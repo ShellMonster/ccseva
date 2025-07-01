@@ -48,6 +48,12 @@ export interface PredictionInfo {
   onTrackForReset: boolean; // will tokens last until reset
 }
 
+export interface ActualResetInfo {
+  nextResetTime: Date | null; // actual next reset time from latest session
+  timeUntilReset: number; // milliseconds until actual reset
+  formattedTimeRemaining: string; // human-readable time remaining
+}
+
 export interface UsageStats {
   today: DailyUsage;
   thisWeek: DailyUsage[];
@@ -56,6 +62,7 @@ export interface UsageStats {
   velocity: VelocityInfo; // enhanced burn rate analysis
   prediction: PredictionInfo; // intelligent predictions
   resetInfo: ResetTimeInfo; // reset time tracking
+  actualResetInfo?: ActualResetInfo; // actual reset time from session data
   predictedDepleted: string | null; // when tokens will run out (legacy)
   currentPlan: 'Pro' | 'Max5' | 'Max20' | 'Custom';
   tokenLimit: number;

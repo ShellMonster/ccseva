@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { BrowserWindow, Tray, app, ipcMain, nativeImage, screen } from 'electron';
 import { CCUsageService } from './src/services/ccusageService.js';
 import { NotificationService } from './src/services/notificationService.js';
+import { SettingsService } from './src/services/settingsService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,6 +15,7 @@ class CCSevaApp {
   private window: BrowserWindow | null = null;
   private usageService: CCUsageService;
   private notificationService: NotificationService;
+  private settingsService: SettingsService;
   private updateInterval: NodeJS.Timeout | null = null;
   private displayInterval: NodeJS.Timeout | null = null;
   private showPercentage = true;
@@ -22,6 +24,7 @@ class CCSevaApp {
   constructor() {
     this.usageService = CCUsageService.getInstance();
     this.notificationService = NotificationService.getInstance();
+    this.settingsService = SettingsService.getInstance();
   }
 
   async initialize() {
@@ -169,6 +172,26 @@ class CCSevaApp {
 
     ipcMain.handle('take-screenshot', async () => {
       return this.takeScreenshot();
+    });
+
+    // Settings handlers
+    ipcMain.handle('load-settings', async () => {
+      try {
+        return await this.settingsService.loadSettings();
+      } catch (error) {
+        console.error('Error loading settings:', error);
+        throw error;
+      }
+    });
+
+    ipcMain.handle('save-settings', async (_, settings) => {
+      try {
+        await this.settingsService.saveSettings(settings);
+        return { success: true };
+      } catch (error) {
+        console.error('Error saving settings:', error);
+        throw error;
+      }
     });
   }
 

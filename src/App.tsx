@@ -29,13 +29,10 @@ interface AppState {
     timestamp: Date;
   }>;
   preferences: {
-    autoRefresh: boolean;
-    refreshInterval: number;
-    theme: 'auto' | 'light' | 'dark';
-    notifications: boolean;
-    animationsEnabled: boolean;
     timezone?: string;
     resetHour?: number;
+    plan?: 'auto' | 'Pro' | 'Max5' | 'Max20' | 'Custom';
+    customTokenLimit?: number;
   };
 }
 
@@ -48,15 +45,51 @@ const App: React.FC = () => {
     sidebarExpanded: false,
     notifications: [],
     preferences: {
-      autoRefresh: true,
-      refreshInterval: 30000,
-      theme: 'auto',
-      notifications: true,
-      animationsEnabled: true,
-      timezone: 'America/Los_Angeles',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       resetHour: 0,
+      plan: 'auto',
+      customTokenLimit: undefined,
     },
   });
+
+  // Load settings from storage
+  const loadSettings = useCallback(async () => {
+    try {
+      if (!window.electronAPI) {
+        throw new Error('Electron API not available');
+      }
+
+      const settings = await window.electronAPI.loadSettings();
+      setState((prev) => ({
+        ...prev,
+        preferences: {
+          ...prev.preferences,
+          ...settings,
+        },
+      }));
+    } catch (error) {
+      console.error('Error loading settings:', error);
+      // Continue with default settings if loading fails
+    }
+  }, []);
+
+  // Save settings to storage
+  const saveSettings = useCallback(async (newSettings: Partial<AppState['preferences']>) => {
+    try {
+      if (!window.electronAPI) {
+        throw new Error('Electron API not available');
+      }
+
+      await window.electronAPI.saveSettings(newSettings);
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      addNotification({
+        type: 'error',
+        title: 'Settings Save Failed',
+        message: 'Could not save settings to local storage',
+      });
+    }
+  }, []);
 
   // Load usage stats with enhanced error handling
   const loadUsageStats = useCallback(async (showLoading = true) => {
@@ -192,12 +225,18 @@ const App: React.FC = () => {
   };
 
   // Update preferences
-  const updatePreferences = (newPreferences: Partial<AppState['preferences']>) => {
-    setState((prev) => ({
-      ...prev,
-      preferences: { ...prev.preferences, ...newPreferences },
-    }));
-  };
+  const updatePreferences = useCallback(
+    (newPreferences: Partial<AppState['preferences']>) => {
+      setState((prev) => ({
+        ...prev,
+        preferences: { ...prev.preferences, ...newPreferences },
+      }));
+
+      // Save settings immediately when changed
+      saveSettings(newPreferences);
+    },
+    [saveSettings]
+  );
 
   // Handle navigation
   const navigateTo = useCallback((view: ViewType) => {
@@ -206,33 +245,34 @@ const App: React.FC = () => {
 
   // Setup auto-refresh and event listeners
   useEffect(() => {
-    loadUsageStats();
+    // Load settings first, then usage stats
+    loadSettings().then(() => {
+      loadUsageStats();
+    });
 
     // Handle usage updates from main process
     const handleUsageUpdate = () => {
-      if (state.preferences.autoRefresh) {
-        // Silent update from main process - no notification needed
-        setState((prev) => ({ ...prev, loading: true, error: null }));
+      // Silent update from main process - no notification needed
+      setState((prev) => ({ ...prev, loading: true, error: null }));
 
-        window.electronAPI
-          .getUsageStats()
-          .then((data) => {
-            setState((prev) => ({
-              ...prev,
-              stats: data,
-              loading: false,
-              error: null,
-            }));
-          })
-          .catch((err) => {
-            const errorMessage = err instanceof Error ? err.message : 'Failed to load usage stats';
-            setState((prev) => ({
-              ...prev,
-              error: errorMessage,
-              loading: false,
-            }));
-          });
-      }
+      window.electronAPI
+        .getUsageStats()
+        .then((data) => {
+          setState((prev) => ({
+            ...prev,
+            stats: data,
+            loading: false,
+            error: null,
+          }));
+        })
+        .catch((err) => {
+          const errorMessage = err instanceof Error ? err.message : 'Failed to load usage stats';
+          setState((prev) => ({
+            ...prev,
+            error: errorMessage,
+            loading: false,
+          }));
+        });
     };
 
     if (window.electronAPI) {
@@ -244,7 +284,7 @@ const App: React.FC = () => {
         window.electronAPI.removeUsageUpdatedListener(handleUsageUpdate);
       }
     };
-  }, [state.preferences.autoRefresh, loadUsageStats]);
+  }, [loadSettings, loadUsageStats]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -462,11 +502,7 @@ const App: React.FC = () => {
             {/* Content */}
             <div className="space-y-3 pb-3">
               {state.currentView === 'dashboard' && (
-                <Dashboard
-                  stats={currentStats}
-                  status={usageStatus}
-                  timeRemaining={timeRemaining}
-                />
+                <Dashboard stats={currentStats} status={usageStatus} />
               )}
 
               {state.currentView === 'analytics' && (
@@ -474,7 +510,11 @@ const App: React.FC = () => {
               )}
 
               {state.currentView === 'terminal' && (
-                <TerminalView stats={currentStats} onRefresh={refreshData} />
+                <TerminalView
+                  stats={currentStats}
+                  onRefresh={refreshData}
+                  preferences={state.preferences}
+                />
               )}
 
               {state.currentView === 'settings' && (

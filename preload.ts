@@ -8,6 +8,9 @@ const electronAPI = {
   onUsageUpdated: (callback: () => void) => ipcRenderer.on('usage-updated', callback),
   removeUsageUpdatedListener: (callback: () => void) =>
     ipcRenderer.removeListener('usage-updated', callback),
+  // Settings methods
+  loadSettings: () => ipcRenderer.invoke('load-settings'),
+  saveSettings: (settings: Record<string, unknown>) => ipcRenderer.invoke('save-settings', settings),
 };
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);

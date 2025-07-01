@@ -6,9 +6,15 @@ import { Button } from './ui/button';
 interface TerminalViewProps {
   stats: UsageStats;
   onRefresh: () => void;
+  preferences: {
+    timezone?: string;
+    resetHour?: number;
+    plan?: 'auto' | 'Pro' | 'Max5' | 'Max20' | 'Custom';
+    customTokenLimit?: number;
+  };
 }
 
-export const TerminalView: React.FC<TerminalViewProps> = ({ stats, onRefresh }) => {
+export const TerminalView: React.FC<TerminalViewProps> = ({ stats, onRefresh, preferences }) => {
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
   const [animatedTimeProgress, setAnimatedTimeProgress] = useState(0);
 
@@ -56,6 +62,37 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ stats, onRefresh }) 
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toLocaleString();
+  };
+
+  const formatPlanDisplay = (): { plan: string; label: string } => {
+    const selectedPlan = preferences.plan || 'auto';
+
+    if (selectedPlan === 'auto') {
+      return {
+        plan: `Auto-detect (${stats.currentPlan})`,
+        label: 'detected',
+      };
+    }
+
+    if (selectedPlan === 'Custom') {
+      const tokenLimit = preferences.customTokenLimit || stats.tokenLimit;
+      return {
+        plan: `Custom (${formatNumber(tokenLimit)})`,
+        label: 'selected',
+      };
+    }
+
+    // For Pro, Max5, Max20
+    const tokenLimits = {
+      Pro: '7K',
+      Max5: '35K',
+      Max20: '140K',
+    };
+
+    return {
+      plan: `Claude ${selectedPlan} (${tokenLimits[selectedPlan as keyof typeof tokenLimits]})`,
+      label: 'selected',
+    };
   };
 
   const generateProgressBar = (percentage: number, width = 20): string => {
@@ -135,8 +172,8 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ stats, onRefresh }) 
         <div className="space-y-1">
           <div className="text-purple-400 text-xs">PLAN:</div>
           <div className="flex items-center gap-2">
-            <span className="text-white font-bold">{stats.currentPlan}</span>
-            <span className="text-gray-400 text-xs">auto-detected</span>
+            <span className="text-white font-bold">{formatPlanDisplay().plan}</span>
+            <span className="text-gray-400 text-xs">{formatPlanDisplay().label}</span>
             <span className="text-lg">📊</span>
           </div>
         </div>
