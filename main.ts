@@ -254,6 +254,12 @@ class CCSevaApp {
 
   private showWindow() {
     if (this.window) {
+      const cursorPoint = screen.getCursorScreenPoint();
+      const activeDisplay = screen.getDisplayNearestPoint(cursorPoint);
+
+      const { x, y, width, height } = activeDisplay.workArea;
+      this.window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+      this.window.setBounds({ x: x + width - 420, y: y + 50, width: 600, height: 600 });
       this.window.show();
       this.window.focus();
     }
