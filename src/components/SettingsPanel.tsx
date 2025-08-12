@@ -11,6 +11,7 @@ interface SettingsPanelProps {
     plan?: 'auto' | 'Pro' | 'Max5' | 'Max20' | 'Custom';
     customTokenLimit?: number;
     menuBarDisplayMode?: 'percentage' | 'cost' | 'alternate';
+    menuBarCostSource?: 'today' | 'sessionWindow';
   };
   onUpdatePreferences: (preferences: Partial<SettingsPanelProps['preferences']>) => void;
   stats: UsageStats;
@@ -239,12 +240,37 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     <span>Menu bar will show usage percentage only (e.g., 75%)</span>
                   )}
                   {preferences.menuBarDisplayMode === 'cost' && (
-                    <span>Menu bar will show total cost only (e.g., $1.25)</span>
+                    <span>
+                      Menu bar will show total cost only (e.g., $1.25. Basis configurable below)
+                    </span>
                   )}
                   {(!preferences.menuBarDisplayMode ||
                     preferences.menuBarDisplayMode === 'alternate') && (
                     <span>Menu bar will alternate between percentage and cost every 3 seconds</span>
                   )}
+                </div>
+              </div>
+
+              {/* Cost Basis for Menu Bar */}
+              <div>
+                <div className="text-white/70 text-sm mb-2">Cost Basis</div>
+                <Select
+                  value={preferences.menuBarCostSource || 'today'}
+                  onValueChange={(value: 'today' | 'sessionWindow') =>
+                    handlePreferenceChange('menuBarCostSource', value)
+                  }
+                >
+                  <SelectTrigger className="w-full bg-white/5 border-white/10 text-white hover:bg-white/10">
+                    <SelectValue placeholder="Select cost basis" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="today">Today (daily total)</SelectItem>
+                    <SelectItem value="sessionWindow">Current session window (5h)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="text-white/50 text-xs mt-2">
+                  When set to Current session window, the menu bar cost reflects the rolling 5-hour
+                  session window instead of today's total.
                 </div>
               </div>
             </div>

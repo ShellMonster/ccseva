@@ -91,6 +91,8 @@ export class CCUsageService {
   // Custom token limit specified by the user when plan === 'Custom'
   private customTokenLimit: number | undefined = undefined;
   private detectedTokenLimit = 7000;
+  // Basis for cost shown in menu bar
+  private menuBarCostSource: 'today' | 'sessionWindow' = 'today';
 
   constructor() {
     this.resetTimeService = ResetTimeService.getInstance();
@@ -133,6 +135,9 @@ export class CCUsageService {
     }
     if (config.customTokenLimit !== undefined) {
       this.customTokenLimit = config.customTokenLimit;
+    }
+    if (config.menuBarCostSource !== undefined) {
+      this.menuBarCostSource = config.menuBarCostSource;
     }
 
     // Clear cache to force recalculation with new config
@@ -517,12 +522,22 @@ export class CCUsageService {
   async getMenuBarData(): Promise<MenuBarData> {
     const stats = await this.getUsageStats();
 
+    // Determine cost based on configured source
+    let cost = stats.today.totalCost;
+    if (this.menuBarCostSource === 'sessionWindow') {
+      if (stats.sessionTracking?.activeWindow.totalCost !== undefined) {
+        cost = stats.sessionTracking.activeWindow.totalCost;
+      } else if (this.historicalBlocks && this.historicalBlocks.length > 0) {
+        cost = this.getSessionWindowCostFromBlocks(this.historicalBlocks);
+      }
+    }
+
     return {
       tokensUsed: stats.tokensUsed,
       tokenLimit: stats.tokenLimit,
       percentageUsed: stats.percentageUsed,
       status: this.getUsageStatus(stats.percentageUsed),
-      cost: stats.today.totalCost,
+      cost,
     };
   }
 
@@ -1007,14 +1022,41 @@ export class CCUsageService {
   async getEnhancedMenuBarData(): Promise<MenuBarData> {
     const stats = await this.getUsageStats();
 
+    let cost = stats.today.totalCost;
+    if (this.menuBarCostSource === 'sessionWindow') {
+      if (stats.sessionTracking?.activeWindow.totalCost !== undefined) {
+        cost = stats.sessionTracking.activeWindow.totalCost;
+      } else if (this.historicalBlocks && this.historicalBlocks.length > 0) {
+        cost = this.getSessionWindowCostFromBlocks(this.historicalBlocks);
+      }
+    }
+
     return {
       tokensUsed: stats.tokensUsed,
       tokenLimit: stats.tokenLimit,
       percentageUsed: stats.percentageUsed,
       status: this.getUsageStatus(stats.percentageUsed),
-      cost: stats.today.totalCost,
+      cost,
       timeUntilReset: this.resetTimeService.formatTimeUntilReset(stats.resetInfo.timeUntilReset),
       resetInfo: stats.resetInfo,
     };
+  }
+
+  /**
+   * Calculate total cost within the rolling 5-hour session window from raw blocks
+   */
+  private getSessionWindowCostFromBlocks(blocks: SessionBlock[]): number {
+    if (!blocks || blocks.length === 0) return 0;
+    const now = new Date();
+    const windowStart = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+    let total = 0;
+
+    for (const block of blocks) {
+      if (block.isGap) continue;
+      if (block.startTime >= windowStart) {
+        total += block.costUSD || 0;
+      }
+    }
+    return total;
   }
 }

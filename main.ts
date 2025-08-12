@@ -39,6 +39,7 @@ class CCSevaApp {
     this.usageService.updateConfiguration({
       plan: settings.plan,
       customTokenLimit: settings.customTokenLimit,
+      menuBarCostSource: settings.menuBarCostSource,
     });
 
     this.createTray();
@@ -219,6 +220,7 @@ class CCSevaApp {
         this.usageService.updateConfiguration({
           plan: settings.plan,
           customTokenLimit: settings.customTokenLimit,
+          menuBarCostSource: settings.menuBarCostSource,
         });
         
         // Handle menu bar display mode change
@@ -240,7 +242,12 @@ class CCSevaApp {
           // Update display immediately
           this.updateTrayDisplay();
         }
-        
+
+        // If cost source changed, refresh tray title to pick up new cost
+        if (settings.menuBarCostSource) {
+          await this.updateTrayTitle();
+        }
+
         return { success: true };
       } catch (error) {
         console.error('Error saving settings:', error);
