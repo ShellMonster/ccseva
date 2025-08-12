@@ -134,8 +134,8 @@ class CCSevaApp {
     this.window = new BrowserWindow({
       width: 600,
       height: 600,
-      x: width - 420,
-      y: 50,
+      x: width - 620,
+      y: 10,
       show: false,
       frame: false,
       resizable: true,
@@ -278,7 +278,7 @@ class CCSevaApp {
 
       const { x, y, width, height } = activeDisplay.workArea;
       this.window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-      this.window.setBounds({ x: x + width - 420, y: y + 50, width: 600, height: 600 });
+      this.window.setBounds({ x: x + width - 620, y: y + 10, width: 600, height: 600 });
       this.window.show();
       this.window.focus();
     }
