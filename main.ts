@@ -21,6 +21,7 @@ class CCSevaApp {
   private showPercentage = true;
   private cachedMenuBarData: any = null;
   private menuBarDisplayMode: 'percentage' | 'cost' | 'alternate' = 'alternate';
+  private menuBarCostSource: 'today' | 'sessionWindow' = 'today';
 
   constructor() {
     this.usageService = CCUsageService.getInstance();
@@ -34,11 +35,13 @@ class CCSevaApp {
     // Load settings on startup
     const settings = await this.settingsService.loadSettings();
     this.menuBarDisplayMode = settings.menuBarDisplayMode || 'alternate';
-    
+    this.menuBarCostSource = settings.menuBarCostSource || 'today';
+
     // Apply plan configuration to usage service
     this.usageService.updateConfiguration({
       plan: settings.plan,
       customTokenLimit: settings.customTokenLimit,
+      menuBarCostSource: settings.menuBarCostSource,
     });
 
     this.createTray();
@@ -133,8 +136,8 @@ class CCSevaApp {
     this.window = new BrowserWindow({
       width: 600,
       height: 600,
-      x: width - 420,
-      y: 50,
+      x: width - 620,
+      y: 10,
       show: false,
       frame: false,
       resizable: true,
@@ -219,6 +222,7 @@ class CCSevaApp {
         this.usageService.updateConfiguration({
           plan: settings.plan,
           customTokenLimit: settings.customTokenLimit,
+          menuBarCostSource: settings.menuBarCostSource,
         });
         
         // Handle menu bar display mode change
@@ -240,7 +244,13 @@ class CCSevaApp {
           // Update display immediately
           this.updateTrayDisplay();
         }
-        
+
+        // If cost source changed, refresh tray title to pick up new cost
+        if (settings.menuBarCostSource && settings.menuBarCostSource !== this.menuBarCostSource) {
+          this.menuBarCostSource = settings.menuBarCostSource;
+          await this.updateTrayTitle();
+        }
+
         return { success: true };
       } catch (error) {
         console.error('Error saving settings:', error);
@@ -271,7 +281,7 @@ class CCSevaApp {
 
       const { x, y, width, height } = activeDisplay.workArea;
       this.window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-      this.window.setBounds({ x: x + width - 420, y: y + 50, width: 600, height: 600 });
+      this.window.setBounds({ x: x + width - 620, y: y + 10, width: 600, height: 600 });
       this.window.show();
       this.window.focus();
     }
