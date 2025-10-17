@@ -21,6 +21,7 @@ class CCSevaApp {
   private showPercentage = true;
   private cachedMenuBarData: any = null;
   private menuBarDisplayMode: 'percentage' | 'cost' | 'alternate' = 'alternate';
+  private menuBarCostSource: 'today' | 'sessionWindow' = 'today';
 
   constructor() {
     this.usageService = CCUsageService.getInstance();
@@ -34,7 +35,8 @@ class CCSevaApp {
     // Load settings on startup
     const settings = await this.settingsService.loadSettings();
     this.menuBarDisplayMode = settings.menuBarDisplayMode || 'alternate';
-    
+    this.menuBarCostSource = settings.menuBarCostSource || 'today';
+
     // Apply plan configuration to usage service
     this.usageService.updateConfiguration({
       plan: settings.plan,
@@ -244,7 +246,8 @@ class CCSevaApp {
         }
 
         // If cost source changed, refresh tray title to pick up new cost
-        if (settings.menuBarCostSource) {
+        if (settings.menuBarCostSource && settings.menuBarCostSource !== this.menuBarCostSource) {
+          this.menuBarCostSource = settings.menuBarCostSource;
           await this.updateTrayTitle();
         }
 
