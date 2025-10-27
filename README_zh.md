@@ -10,9 +10,11 @@
 
 ## 截图
 
-![仪表板 - 中文](./screenshots/zh/dashboard.png)
-![分析 - 中文](./screenshots/zh/analytics.png)
-![终端 - 中文](./screenshots/zh/terminal.png)
+<div align="center">
+  <img src="./screenshots/zh/dashboard.png" alt="仪表板 - 中文" width="80%" />
+  <img src="./screenshots/zh/analytics.png" alt="分析 - 中文" width="80%" />
+  <img src="./screenshots/zh/terminal.png" alt="终端 - 中文" width="80%" />
+</div>
 
 ## 功能特性
 
