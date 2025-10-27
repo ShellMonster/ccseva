@@ -12,9 +12,9 @@ A beautiful macOS menu bar app for tracking your Claude Code usage in real-time.
 
 ## Screenshots
 
-![Dashboard](./screenshots/dashboard.png)
-![Analytics](./screenshots/analytics.png)
-![Terminal](./screenshots/terminal.png)
+![Dashboard - English](./screenshots/en/dashboard.png)
+![Analytics - English](./screenshots/en/analytics.png)
+![Terminal - English](./screenshots/en/terminal.png)
 
 ## Features
 

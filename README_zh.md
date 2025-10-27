@@ -10,9 +10,9 @@
 
 ## 截图
 
-![Dashboard](./screenshots/dashboard.png)
-![Analytics](./screenshots/analytics.png)
-![Terminal](./screenshots/terminal.png)
+![仪表板 - 中文](./screenshots/zh/dashboard.png)
+![分析 - 中文](./screenshots/zh/analytics.png)
+![终端 - 中文](./screenshots/zh/terminal.png)
 
 ## 功能特性
 
