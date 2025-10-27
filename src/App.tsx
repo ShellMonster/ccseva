@@ -260,10 +260,9 @@ const App: React.FC = () => {
 
   // Setup auto-refresh and event listeners
   useEffect(() => {
-    // Load settings first, then usage stats
-    loadSettings().then(() => {
-      loadUsageStats();
-    });
+    // 并行加载 settings 和 usage stats，而不是串联加载
+    // 这样可以减少总的加载时间
+    Promise.all([loadSettings(), loadUsageStats(true)]);
 
     // Handle usage updates from main process
     const handleUsageUpdate = () => {
@@ -358,8 +357,10 @@ const App: React.FC = () => {
   const formatTimeRemaining = (burnRate: number, tokensRemaining: number): string => {
     if (burnRate <= 0) return t('timeFormat.unlimited');
     const hoursRemaining = tokensRemaining / burnRate;
-    if (hoursRemaining < 1) return `${Math.round(hoursRemaining * 60)}${t('timeFormat.minutesRemaining')}`;
-    if (hoursRemaining < 24) return `${Math.round(hoursRemaining)}${t('timeFormat.hoursRemaining')}`;
+    if (hoursRemaining < 1)
+      return `${Math.round(hoursRemaining * 60)}${t('timeFormat.minutesRemaining')}`;
+    if (hoursRemaining < 24)
+      return `${Math.round(hoursRemaining)}${t('timeFormat.hoursRemaining')}`;
     return `${Math.round(hoursRemaining / 24)}${t('timeFormat.daysRemaining')}`;
   };
 

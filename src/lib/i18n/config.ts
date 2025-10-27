@@ -20,7 +20,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en', // 降级语言
-    debug: true, // 启用 debug 模式查看加载状态
+    debug: false, // 关闭 debug 模式以提升启动性能（生产环境必须关闭）
     interpolation: {
       escapeValue: false, // React 已经保护 XSS
     },
