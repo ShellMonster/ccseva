@@ -12,7 +12,7 @@ interface SettingsPanelProps {
     plan?: 'auto' | 'Pro' | 'Max5' | 'Max20' | 'Custom';
     customTokenLimit?: number;
     menuBarDisplayMode?: 'percentage' | 'cost' | 'alternate';
-    menuBarCostSource?: 'today' | 'sessionWindow';
+    menuBarCostDisplayMode?: 'today' | 'sessionWindow' | 'alternate';
     language?: 'en' | 'zh';
   };
   onUpdatePreferences: (preferences: Partial<SettingsPanelProps['preferences']>) => void;
@@ -72,9 +72,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       <Card className="bg-neutral-900/80 backdrop-blur-sm border-neutral-800">
         <CardHeader>
           <CardTitle className="text-white text-2xl">{t('settingsPanel.title')}</CardTitle>
-          <CardDescription className="text-white/70">
-            {t('settingsPanel.subtitle')}
-          </CardDescription>
+          <CardDescription className="text-white/70">{t('settingsPanel.subtitle')}</CardDescription>
         </CardHeader>
       </Card>
 
@@ -87,9 +85,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <span className="text-2xl">🌍</span>
               <div>
                 <div className="text-white font-medium">{t('settingsPanel.timezoneLabel')}</div>
-                <div className="text-white/60 text-sm">
-                  {t('settingsPanel.timezoneDesc')}
-                </div>
+                <div className="text-white/60 text-sm">{t('settingsPanel.timezoneDesc')}</div>
               </div>
             </div>
 
@@ -139,9 +135,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <span className="text-2xl">🤖</span>
               <div>
                 <div className="text-white font-medium">{t('settingsPanel.planLabel')}</div>
-                <div className="text-white/60 text-sm">
-                  {t('settingsPanel.planDesc')}
-                </div>
+                <div className="text-white/60 text-sm">{t('settingsPanel.planDesc')}</div>
               </div>
             </div>
 
@@ -172,7 +166,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
               {preferences.plan === 'Custom' && (
                 <div>
-                  <div className="text-white/70 text-sm mb-2">{t('settingsPanel.customTokenLimit')}</div>
+                  <div className="text-white/70 text-sm mb-2">
+                    {t('settingsPanel.customTokenLimit')}
+                  </div>
                   <input
                     type="number"
                     min="1000"
@@ -188,16 +184,21 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder:text-white/50 focus:border-blue-500 focus:outline-none"
                     placeholder={t('settingsPanel.enterCustomLimit')}
                   />
-                  <div className="text-white/50 text-xs mt-1">{t('settingsPanel.tokensPerDay')}</div>
+                  <div className="text-white/50 text-xs mt-1">
+                    {t('settingsPanel.tokensPerDay')}
+                  </div>
                 </div>
               )}
 
               <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
                 <div className="text-green-300 text-sm">
                   <span className="text-lg mr-2">ℹ️</span>
-                  {t('settingsPanel.currentDetectedPlan')}: <span className="font-medium">{stats.currentPlan}</span>
+                  {t('settingsPanel.currentDetectedPlan')}:{' '}
+                  <span className="font-medium">{stats.currentPlan}</span>
                   {stats.tokenLimit && (
-                    <span className="ml-2">({stats.tokenLimit.toLocaleString()} {t('settingsPanel.tokensPerDay')})</span>
+                    <span className="ml-2">
+                      ({stats.tokenLimit.toLocaleString()} {t('settingsPanel.tokensPerDay')})
+                    </span>
                   )}
                 </div>
               </div>
@@ -210,15 +211,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <span className="text-2xl">🌐</span>
               <div>
                 <div className="text-white font-medium">{t('settingsPanel.languageLabel')}</div>
-                <div className="text-white/60 text-sm">
-                  {t('settingsPanel.languageDesc')}
-                </div>
+                <div className="text-white/60 text-sm">{t('settingsPanel.languageDesc')}</div>
               </div>
             </div>
 
             <div className="ml-11 space-y-3">
               <div>
-                <div className="text-white/70 text-sm mb-2">{t('settingsPanel.languageSelection')}</div>
+                <div className="text-white/70 text-sm mb-2">
+                  {t('settingsPanel.languageSelection')}
+                </div>
                 <Select
                   value={preferences.language || i18n.language || 'en'}
                   onValueChange={(value: 'en' | 'zh') => {
@@ -244,9 +245,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <span className="text-2xl">📊</span>
               <div>
                 <div className="text-white font-medium">{t('settingsPanel.menuBarDisplay')}</div>
-                <div className="text-white/60 text-sm">
-                  {t('settingsPanel.menuBarDisplayDesc')}
-                </div>
+                <div className="text-white/60 text-sm">{t('settingsPanel.menuBarDisplayDesc')}</div>
               </div>
             </div>
 
@@ -277,9 +276,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     <span>{t('settingsPanel.menuBarWillShowPercentage')}</span>
                   )}
                   {preferences.menuBarDisplayMode === 'cost' && (
-                    <span>
-                      {t('settingsPanel.menuBarWillShowCost')}
-                    </span>
+                    <span>{t('settingsPanel.menuBarWillShowCost')}</span>
                   )}
                   {(!preferences.menuBarDisplayMode ||
                     preferences.menuBarDisplayMode === 'alternate') && (
@@ -288,26 +285,36 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 </div>
               </div>
 
-              {/* Cost Basis for Menu Bar (hidden when Percentage Only is selected) */}
+              {/* Cost Display Mode */}
               {preferences.menuBarDisplayMode !== 'percentage' && (
                 <div>
-                  <div className="text-white/70 text-sm mb-2">{t('settingsPanel.costBasis')}</div>
+                  <div className="text-white/70 text-sm mb-2">{t('settingsPanel.costDisplayMode')}</div>
                   <Select
-                    value={preferences.menuBarCostSource || 'today'}
-                    onValueChange={(value: 'today' | 'sessionWindow') =>
-                      handlePreferenceChange('menuBarCostSource', value)
+                    value={preferences.menuBarCostDisplayMode || 'today'}
+                    onValueChange={(value: 'today' | 'sessionWindow' | 'alternate') =>
+                      handlePreferenceChange('menuBarCostDisplayMode', value)
                     }
                   >
                     <SelectTrigger className="w-full bg-white/5 border-white/10 text-white hover:bg-white/10">
-                      <SelectValue placeholder={t('settingsPanel.costBasis')} />
+                      <SelectValue placeholder={t('settingsPanel.costDisplayMode')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="today">{t('settingsPanel.today')}</SelectItem>
-                      <SelectItem value="sessionWindow">{t('settingsPanel.sessionWindow')}</SelectItem>
+                      <SelectItem value="today">{t('settingsPanel.modeToday')}</SelectItem>
+                      <SelectItem value="sessionWindow">{t('settingsPanel.modeSessionWindow')}</SelectItem>
+                      <SelectItem value="alternate">{t('settingsPanel.modeAlternate')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <div className="text-white/50 text-xs mt-2">
-                    {t('settingsPanel.costBasisDesc')}
+                    {preferences.menuBarCostDisplayMode === 'today' && (
+                      <span>{t('dashboard.costToday')} - {t('settingsPanel.costDisplayModeDesc')}</span>
+                    )}
+                    {preferences.menuBarCostDisplayMode === 'sessionWindow' && (
+                      <span>{t('settingsPanel.sessionWindow')} - {t('settingsPanel.costBasisDesc')}</span>
+                    )}
+                    {(!preferences.menuBarCostDisplayMode ||
+                      preferences.menuBarCostDisplayMode === 'alternate') && (
+                      <span>{t('settingsPanel.costDisplayModeInfo')}</span>
+                    )}
                   </div>
                 </div>
               )}

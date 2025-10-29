@@ -35,7 +35,7 @@ interface AppState {
     plan?: 'auto' | 'Pro' | 'Max5' | 'Max20' | 'Custom';
     customTokenLimit?: number;
     menuBarDisplayMode?: 'percentage' | 'cost' | 'alternate';
-    menuBarCostSource?: 'today' | 'sessionWindow';
+    menuBarCostDisplayMode?: 'today' | 'sessionWindow' | 'alternate';
     language?: 'en' | 'zh';
   };
 }

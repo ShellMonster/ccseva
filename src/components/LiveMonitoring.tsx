@@ -174,13 +174,25 @@ export const LiveMonitoring: React.FC<LiveMonitoringProps> = ({ stats, onRefresh
     const timeUntilReset = stats.resetInfo?.timeUntilReset;
 
     if (stats.percentageUsed >= 95) {
-      addLogEntry('error', `${t('liveMonitoring.criticalUsage')}: ${stats.percentageUsed.toFixed(1)}% ${t('liveMonitoring.usageDetected')}`, '🚨');
+      addLogEntry(
+        'error',
+        `${t('liveMonitoring.criticalUsage')}: ${stats.percentageUsed.toFixed(1)}% ${t('liveMonitoring.usageDetected')}`,
+        '🚨'
+      );
     } else if (stats.percentageUsed >= 80) {
-      addLogEntry('warning', `${t('liveMonitoring.highUsage')}: ${stats.percentageUsed.toFixed(1)}%`, '⚠️');
+      addLogEntry(
+        'warning',
+        `${t('liveMonitoring.highUsage')}: ${stats.percentageUsed.toFixed(1)}%`,
+        '⚠️'
+      );
     }
 
     if (timeUntilReset && timeUntilReset < 3600000) {
-      addLogEntry('info', `${t('liveMonitoring.resetIn')} ${formatTimeRemaining(timeUntilReset)}`, '⏰');
+      addLogEntry(
+        'info',
+        `${t('liveMonitoring.resetIn')} ${formatTimeRemaining(timeUntilReset)}`,
+        '⏰'
+      );
     }
   }, [stats.percentageUsed, stats.resetInfo?.timeUntilReset, addLogEntry, t]);
 
@@ -206,7 +218,9 @@ export const LiveMonitoring: React.FC<LiveMonitoringProps> = ({ stats, onRefresh
         <CardContent className="p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold text-gradient mb-1">{t('liveMonitoring.liveMonitoringTitle')}</h2>
+              <h2 className="text-xl font-bold text-gradient mb-1">
+                {t('liveMonitoring.liveMonitoringTitle')}
+              </h2>
               <p className="text-sm text-neutral-400">{t('liveMonitoring.realtimeTracking')}</p>
             </div>
 
@@ -216,7 +230,9 @@ export const LiveMonitoring: React.FC<LiveMonitoringProps> = ({ stats, onRefresh
                   <div
                     className={`w-2 h-2 rounded-full ${isLiveMode ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}
                   />
-                  <span className="text-xs text-neutral-300">{isLiveMode ? t('liveMonitoring.live') : t('liveMonitoring.paused')}</span>
+                  <span className="text-xs text-neutral-300">
+                    {isLiveMode ? t('liveMonitoring.live') : t('liveMonitoring.paused')}
+                  </span>
                 </div>
               </div>
 
@@ -328,7 +344,9 @@ export const LiveMonitoring: React.FC<LiveMonitoringProps> = ({ stats, onRefresh
             <div className="text-center">
               <div className="text-2xl font-bold text-white mb-1">{stats.currentPlan}</div>
               <div className="text-sm text-neutral-400">{t('liveMonitoring.currentPlan')}</div>
-              <div className="text-xs text-neutral-500 mt-1">📊 {t('liveMonitoring.autoDetected')}</div>
+              <div className="text-xs text-neutral-500 mt-1">
+                📊 {t('liveMonitoring.autoDetected')}
+              </div>
             </div>
 
             <div className="text-center">
@@ -350,7 +368,9 @@ export const LiveMonitoring: React.FC<LiveMonitoringProps> = ({ stats, onRefresh
                 {stats.prediction?.confidence || 0}%
               </div>
               <div className="text-sm text-neutral-400">{t('liveMonitoring.confidence')}</div>
-              <div className="text-xs text-neutral-500 mt-1">🎯 {t('liveMonitoring.prediction')}</div>
+              <div className="text-xs text-neutral-500 mt-1">
+                🎯 {t('liveMonitoring.prediction')}
+              </div>
             </div>
           </div>
         </CardContent>

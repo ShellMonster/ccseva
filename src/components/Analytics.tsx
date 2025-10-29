@@ -65,106 +65,110 @@ const ControlTabs: React.FC<{
 }> = ({ timeRange, setTimeRange, chartType, setChartType, selectedMetric, setSelectedMetric }) => {
   const { t } = useTranslation();
   return (
-  <div className="flex flex-wrap gap-3 mb-5">
-    {/* Time Range */}
-    <div className="flex bg-neutral-800/50 rounded-xl p-1 backdrop-blur-sm border border-white/10">
-      {(['7d', '30d'] as ChartTimeRange[]).map((range) => (
-        <Button
-          key={range}
-          onClick={() => setTimeRange(range)}
-          variant="ghost"
-          size="sm"
-          className={`px-3 py-1.5 h-auto rounded-lg text-sm font-medium transition-all ${
-            timeRange === range
-              ? 'bg-blue-500 text-white shadow-lg hover:bg-blue-600'
-              : 'text-neutral-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <svg
-            className="w-4 h-4 inline mr-1.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+    <div className="flex flex-wrap gap-3 mb-5">
+      {/* Time Range */}
+      <div className="flex bg-neutral-800/50 rounded-xl p-1 backdrop-blur-sm border border-white/10">
+        {(['7d', '30d'] as ChartTimeRange[]).map((range) => (
+          <Button
+            key={range}
+            onClick={() => setTimeRange(range)}
+            variant="ghost"
+            size="sm"
+            className={`px-3 py-1.5 h-auto rounded-lg text-sm font-medium transition-all ${
+              timeRange === range
+                ? 'bg-blue-500 text-white shadow-lg hover:bg-blue-600'
+                : 'text-neutral-400 hover:text-white hover:bg-white/5'
+            }`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-          {range === '7d' ? t('analytics.sevenDays') : t('analytics.thirtyDays')}
-        </Button>
-      ))}
-    </div>
+            <svg
+              className="w-4 h-4 inline mr-1.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            {range === '7d' ? t('analytics.sevenDays') : t('analytics.thirtyDays')}
+          </Button>
+        ))}
+      </div>
 
-    {/* Chart Type */}
-    <div className="flex bg-neutral-800/50 rounded-xl p-1 backdrop-blur-sm border border-white/10">
-      {(
-        [
-          {
-            type: 'area',
-            label: t('analytics.area'),
-            icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9',
-          },
-          { type: 'line', label: t('analytics.line'), icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-          {
-            type: 'bar',
-            label: t('analytics.bar'),
-            icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10',
-          },
-        ] as { type: ChartType; label: string; icon: string }[]
-      ).map(({ type, label, icon }) => (
-        <Button
-          key={type}
-          onClick={() => setChartType(type)}
-          variant="ghost"
-          size="sm"
-          className={`px-3 py-1.5 h-auto rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
-            chartType === type
-              ? 'bg-purple-500 text-white shadow-lg hover:bg-purple-600'
-              : 'text-neutral-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
-          </svg>
-          {label}
-        </Button>
-      ))}
-    </div>
+      {/* Chart Type */}
+      <div className="flex bg-neutral-800/50 rounded-xl p-1 backdrop-blur-sm border border-white/10">
+        {(
+          [
+            {
+              type: 'area',
+              label: t('analytics.area'),
+              icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9',
+            },
+            { type: 'line', label: t('analytics.line'), icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+            {
+              type: 'bar',
+              label: t('analytics.bar'),
+              icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10',
+            },
+          ] as { type: ChartType; label: string; icon: string }[]
+        ).map(({ type, label, icon }) => (
+          <Button
+            key={type}
+            onClick={() => setChartType(type)}
+            variant="ghost"
+            size="sm"
+            className={`px-3 py-1.5 h-auto rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+              chartType === type
+                ? 'bg-purple-500 text-white shadow-lg hover:bg-purple-600'
+                : 'text-neutral-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
+            </svg>
+            {label}
+          </Button>
+        ))}
+      </div>
 
-    {/* Metric Toggle */}
-    <div className="flex bg-neutral-800/50 rounded-xl p-1 backdrop-blur-sm border border-white/10">
-      {(
-        [
-          { metric: 'tokens', label: t('analytics.tokens'), icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-          {
-            metric: 'cost',
-            label: t('analytics.cost'),
-            icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1',
-          },
-        ] as { metric: 'tokens' | 'cost'; label: string; icon: string }[]
-      ).map(({ metric, label, icon }) => (
-        <Button
-          key={metric}
-          onClick={() => setSelectedMetric(metric)}
-          variant="ghost"
-          size="sm"
-          className={`px-3 py-1.5 h-auto rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
-            selectedMetric === metric
-              ? 'bg-emerald-500 text-white shadow-lg hover:bg-emerald-600'
-              : 'text-neutral-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
-          </svg>
-          {label}
-        </Button>
-      ))}
+      {/* Metric Toggle */}
+      <div className="flex bg-neutral-800/50 rounded-xl p-1 backdrop-blur-sm border border-white/10">
+        {(
+          [
+            {
+              metric: 'tokens',
+              label: t('analytics.tokens'),
+              icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
+            },
+            {
+              metric: 'cost',
+              label: t('analytics.cost'),
+              icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1',
+            },
+          ] as { metric: 'tokens' | 'cost'; label: string; icon: string }[]
+        ).map(({ metric, label, icon }) => (
+          <Button
+            key={metric}
+            onClick={() => setSelectedMetric(metric)}
+            variant="ghost"
+            size="sm"
+            className={`px-3 py-1.5 h-auto rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+              selectedMetric === metric
+                ? 'bg-emerald-500 text-white shadow-lg hover:bg-emerald-600'
+                : 'text-neutral-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
+            </svg>
+            {label}
+          </Button>
+        ))}
+      </div>
     </div>
-  </div>
   );
 };
 
@@ -177,34 +181,34 @@ const SummaryStats: React.FC<{
 }> = ({ totalWeekTokens, totalWeekCost, avgDailyTokens, avgDailyCost }) => {
   const { t } = useTranslation();
   return (
-  <div className="grid grid-cols-4 gap-3">
-    <Card className="bg-neutral-900/50 border-neutral-800">
-      <CardContent className="p-3 text-center">
-        <div className="text-xl font-bold text-white mb-1">{formatNumber(totalWeekTokens)}</div>
-        <div className="text-xs text-neutral-400">{t('analytics.totalTokensWeek')}</div>
-      </CardContent>
-    </Card>
-    <Card className="bg-neutral-900/50 border-neutral-800">
-      <CardContent className="p-3 text-center">
-        <div className="text-xl font-bold text-white mb-1">{formatCurrency(totalWeekCost)}</div>
-        <div className="text-xs text-neutral-400">{t('analytics.totalCostWeek')}</div>
-      </CardContent>
-    </Card>
-    <Card className="bg-neutral-900/50 border-neutral-800">
-      <CardContent className="p-3 text-center">
-        <div className="text-xl font-bold text-white mb-1">
-          {formatNumber(Math.round(avgDailyTokens))}
-        </div>
-        <div className="text-xs text-neutral-400">{t('analytics.avgDailyTokens')}</div>
-      </CardContent>
-    </Card>
-    <Card className="bg-neutral-900/50 border-neutral-800">
-      <CardContent className="p-3 text-center">
-        <div className="text-xl font-bold text-white mb-1">{formatCurrency(avgDailyCost)}</div>
-        <div className="text-xs text-neutral-400">{t('analytics.avgDailyCost')}</div>
-      </CardContent>
-    </Card>
-  </div>
+    <div className="grid grid-cols-4 gap-3">
+      <Card className="bg-neutral-900/50 border-neutral-800">
+        <CardContent className="p-3 text-center">
+          <div className="text-xl font-bold text-white mb-1">{formatNumber(totalWeekTokens)}</div>
+          <div className="text-xs text-neutral-400">{t('analytics.totalTokensWeek')}</div>
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-900/50 border-neutral-800">
+        <CardContent className="p-3 text-center">
+          <div className="text-xl font-bold text-white mb-1">{formatCurrency(totalWeekCost)}</div>
+          <div className="text-xs text-neutral-400">{t('analytics.totalCostWeek')}</div>
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-900/50 border-neutral-800">
+        <CardContent className="p-3 text-center">
+          <div className="text-xl font-bold text-white mb-1">
+            {formatNumber(Math.round(avgDailyTokens))}
+          </div>
+          <div className="text-xs text-neutral-400">{t('analytics.avgDailyTokens')}</div>
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-900/50 border-neutral-800">
+        <CardContent className="p-3 text-center">
+          <div className="text-xl font-bold text-white mb-1">{formatCurrency(avgDailyCost)}</div>
+          <div className="text-xs text-neutral-400">{t('analytics.avgDailyCost')}</div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
@@ -353,10 +357,13 @@ const MainChart: React.FC<{
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-lg font-bold text-white mb-1">
-              {selectedMetric === 'tokens' ? t('analytics.tokenUsageTrends') : t('analytics.costTrends')}
+              {selectedMetric === 'tokens'
+                ? t('analytics.tokenUsageTrends')
+                : t('analytics.costTrends')}
             </h3>
             <p className="text-sm text-neutral-400">
-              {timeRange === '7d' ? t('analytics.lastSevenDays') : t('analytics.lastThirtyDays')} • {chartType} {t('analytics.visualization')}
+              {timeRange === '7d' ? t('analytics.lastSevenDays') : t('analytics.lastThirtyDays')} •{' '}
+              {chartType} {t('analytics.visualization')}
             </p>
           </div>
 
@@ -575,9 +582,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ stats }) => {
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h2 className="text-xl font-bold text-gradient mb-1">{t('analytics.header')}</h2>
-                <p className="text-sm text-neutral-400">
-                  {t('analytics.description')}
-                </p>
+                <p className="text-sm text-neutral-400">{t('analytics.description')}</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -782,9 +787,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ stats }) => {
                               </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>
-                                {t('analytics.burnRateTooltip')}
-                              </p>
+                              <p>{t('analytics.burnRateTooltip')}</p>
                             </TooltipContent>
                           </Tooltip>
                           <div className="text-sm text-neutral-400">{t('analytics.burnRate')}</div>
@@ -808,7 +811,9 @@ export const Analytics: React.FC<AnalyticsProps> = ({ stats }) => {
                       </div>
                     </div>
 
-                    <div className="text-xs text-neutral-400 mb-2">{t('analytics.tokensPerHour')}</div>
+                    <div className="text-xs text-neutral-400 mb-2">
+                      {t('analytics.tokensPerHour')}
+                    </div>
                     <div className="w-full bg-neutral-800 rounded-full h-2">
                       <div
                         className={`h-2 rounded-full transition-all duration-1000 ${
@@ -855,12 +860,16 @@ export const Analytics: React.FC<AnalyticsProps> = ({ stats }) => {
                               <p>{t('analytics.usagePercentage')}</p>
                             </TooltipContent>
                           </Tooltip>
-                          <div className="text-sm text-neutral-400">{t('analytics.efficiency')}</div>
+                          <div className="text-sm text-neutral-400">
+                            {t('analytics.efficiency')}
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-xs text-neutral-400 mb-2">{t('analytics.planUtilization')}</div>
+                    <div className="text-xs text-neutral-400 mb-2">
+                      {t('analytics.planUtilization')}
+                    </div>
                     <div className="w-full bg-neutral-800 rounded-full h-2">
                       <div
                         className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-1000"
@@ -898,9 +907,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ stats }) => {
                               </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>
-                                {t('analytics.depletionTooltip')}
-                              </p>
+                              <p>{t('analytics.depletionTooltip')}</p>
                             </TooltipContent>
                           </Tooltip>
                           <div className="text-sm text-neutral-400">{t('analytics.depletion')}</div>
@@ -945,7 +952,9 @@ export const Analytics: React.FC<AnalyticsProps> = ({ stats }) => {
                       </div>
                     </div>
 
-                    <div className="text-xs text-neutral-400">{t('analytics.costPerThousandTokens')}</div>
+                    <div className="text-xs text-neutral-400">
+                      {t('analytics.costPerThousandTokens')}
+                    </div>
                   </CardContent>
                 </Card>
               </div>

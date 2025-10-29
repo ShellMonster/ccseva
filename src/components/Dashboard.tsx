@@ -45,7 +45,8 @@ const ModelUsageItem = ({
               <div className="text-center">
                 <p className="font-semibold">{modelName}</p>
                 <p className="text-sm mt-1">
-                  {formatNumber(modelData.tokens)} {t('dashboard.tokens').toLowerCase()} • {formatCurrency(modelData.cost)}
+                  {formatNumber(modelData.tokens)} {t('dashboard.tokens').toLowerCase()} •{' '}
+                  {formatCurrency(modelData.cost)}
                 </p>
                 <p className="text-xs mt-1 text-muted-foreground">
                   {percentage.toFixed(1)}% {t('dashboard.ofTodaysUsage')}
@@ -111,7 +112,8 @@ const KeyMetricsRow: React.FC<{
   stats: UsageStats;
   t: (key: string) => string;
 }> = ({ stats, t }) => {
-  const timeRemaining = stats.actualResetInfo?.formattedTimeRemaining || t('dashboard.notAvailable');
+  const timeRemaining =
+    stats.actualResetInfo?.formattedTimeRemaining || t('dashboard.notAvailable');
 
   return (
     <div className="grid grid-cols-3 gap-4 text-center">
@@ -119,7 +121,9 @@ const KeyMetricsRow: React.FC<{
         <div className="text-2xl font-bold text-neutral-100 font-primary">
           {formatNumber(stats.tokensUsed)}
         </div>
-        <div className="text-sm text-neutral-400 font-primary">{t('liveMonitoring.tokensUsed')}</div>
+        <div className="text-sm text-neutral-400 font-primary">
+          {t('liveMonitoring.tokensUsed')}
+        </div>
         <div className="text-xs text-neutral-500 font-primary">
           {t('dashboard.of')} {formatNumber(stats.tokenLimit)}
         </div>
@@ -239,10 +243,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, status }) => {
         <Card className="bg-neutral-900/80 backdrop-blur-sm border-neutral-800">
           <CardContent className="p-6">
             <div className="mb-6">
-              <h2 className="text-xl font-bold text-gradient mb-2 font-primary">{t('dashboard.usageStats')}</h2>
-              <p className="text-neutral-400 text-sm font-primary">
-                {t('header.trackApiUsage')}
-              </p>
+              <h2 className="text-xl font-bold text-gradient mb-2 font-primary">
+                {t('dashboard.usageStats')}
+              </h2>
+              <p className="text-neutral-400 text-sm font-primary">{t('header.trackApiUsage')}</p>
             </div>
 
             {/* Dual Progress Display - Token and Time */}
@@ -316,12 +320,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, status }) => {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {t('dashboard.currentPlanTooltip')}{' '}
-                        {formatNumber(stats.tokenLimit)} {t('dashboard.tokensPerDay')}
+                        {t('dashboard.currentPlanTooltip')} {formatNumber(stats.tokenLimit)}{' '}
+                        {t('dashboard.tokensPerDay')}
                       </p>
                     </TooltipContent>
                   </Tooltip>
-                  <p className="text-sm text-neutral-400 font-primary">{t('dashboard.currentPlanLabel')}</p>
+                  <p className="text-sm text-neutral-400 font-primary">
+                    {t('dashboard.currentPlanLabel')}
+                  </p>
                 </div>
               </div>
 
@@ -374,9 +380,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, status }) => {
                       </p>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>
-                        {t('dashboard.currentBurnRateTooltip')}
-                      </p>
+                      <p>{t('dashboard.currentBurnRateTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
@@ -391,13 +395,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, status }) => {
                       </span>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>
-                        {t('dashboard.depletionTimeTooltip')}
-                      </p>
+                      <p>{t('dashboard.depletionTimeTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
                   <span className="text-neutral-100 font-medium font-primary">
-                    {stats.actualResetInfo?.formattedTimeRemaining || t('dashboard.noActiveSession')}
+                    {stats.actualResetInfo?.formattedTimeRemaining ||
+                      t('dashboard.noActiveSession')}
                   </span>
                 </div>
                 <Badge
@@ -555,7 +558,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, status }) => {
                         • <strong>{t('dashboard.cost')}:</strong> {t('dashboard.costDesc')}
                       </p>
                       <p>
-                        • <strong>{t('dashboard.percentage')}:</strong> {t('dashboard.percentageDesc')}
+                        • <strong>{t('dashboard.percentage')}:</strong>{' '}
+                        {t('dashboard.percentageDesc')}
                       </p>
                       <p>
                         • <strong>{t('dashboard.colors')}:</strong> {t('dashboard.colorsDesc')}

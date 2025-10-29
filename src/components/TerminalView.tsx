@@ -98,7 +98,9 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ stats, onRefresh, pr
     };
 
     return {
-      plan: planLabels[selectedPlan as keyof typeof planLabels] || `Claude ${selectedPlan} (${tokenLimits[selectedPlan as keyof typeof tokenLimits]})`,
+      plan:
+        planLabels[selectedPlan as keyof typeof planLabels] ||
+        `Claude ${selectedPlan} (${tokenLimits[selectedPlan as keyof typeof tokenLimits]})`,
       label: t('terminal.selected'),
     };
   };
@@ -211,7 +213,9 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ stats, onRefresh, pr
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <div className="text-gray-400 text-xs">{t('terminal.activeSessions')}</div>
-              <div className="text-white">{stats.sessionTracking.sessionsInWindow} {t('terminal.sessions')}</div>
+              <div className="text-white">
+                {stats.sessionTracking.sessionsInWindow} {t('terminal.sessions')}
+              </div>
             </div>
             <div className="space-y-1">
               <div className="text-gray-400 text-xs">{t('terminal.windowTokens')}</div>
@@ -287,7 +291,9 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ stats, onRefresh, pr
                 ? t('terminal.warning')
                 : t('terminal.normal')}
           </span>
-          <span>{t('terminal.uptime')} {new Date().toLocaleTimeString()}</span>
+          <span>
+            {t('terminal.uptime')} {new Date().toLocaleTimeString()}
+          </span>
         </div>
       </div>
     </div>
